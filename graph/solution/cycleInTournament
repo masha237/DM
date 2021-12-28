@@ -1,0 +1,141 @@
+#include <iostream>
+#include <cstdio>
+#include <cstdlib>
+#include <algorithm>
+#include <cmath>
+#include <vector>
+#include <set>
+#include <map>
+#include <unordered_set>
+#include <unordered_map>
+#include <queue>
+#include <ctime>
+#include <cassert>
+#include <complex>
+#include <string>
+#include <cstring>
+#include <chrono>
+#include <random>
+#include <queue>
+#include <bitset>
+using namespace std;
+ 
+ 
+int main() {
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    int n;
+    cin >> n;
+    vector<vector<int>> g(n, vector<int>(n));
+    for (int i = 1; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            char x;
+            cin >> x;
+            g[j][i] = (1 - (g[i][j] = x - '0'));
+        }
+    }
+    vector<int> p = {0};
+    for (int i = 1; i < n; i++) {
+        int j = 0;
+        for (; j < p.size(); j++) {
+            if (!g[p[j]][i]) {
+                break;
+            }
+        }
+        p.insert(p.begin() + j, i);
+    }
+    int i = n - 1;
+    for (; i > 2; i--) {
+        if (g[p[i]][p[0]]) {
+            break;
+        }
+    }
+    if (i != n - 1) {
+        vector<int> c = p;
+        c.erase(c.begin() + i + 1, c.end());
+        i++;
+        for (; i < n; i++) {
+            bool fl = 0;
+            for (int j = 0; j < i - 1; j++) {
+                if (g[c[j]][p[i]] && g[p[i]][c[j + 1]]) {
+                    c.insert(c.begin() + j + 1, p[i]);
+                    fl = 1;
+                    break;
+                }
+            }
+            if (!fl) {
+                int beg = i;
+                i++;
+                for (; i < n; i++) {
+ 
+                    for (int j = 0; j < beg - 1; j++) {
+                        if (g[p[i]][c[j + 1]]) {
+                            c.insert(c.begin() + j + 1, p.begin() + beg, p.begin() + i + 1);
+                            fl = 1;
+                            break;
+                        }
+                    }if (fl)
+                        break;
+                }
+            }
+        }
+        p = c;
+    }
+ 
+ 
+    for (auto i: p) {
+        cout << i + 1 << ' ';
+    }
+    return 0;
+}
+ 
+/*
+ 5
+ 
+0
+10
+111
+0011
+ 
+ 5
+ 
+0
+10
+000
+1100
+ 
+ 
+7
+ 
+0
+10
+000
+1100
+01000
+001101
+ 
+ 7
+ 
+0
+10
+000
+1100
+11000
+001101
+ 
+  7
+ 
+0
+10
+000
+1100
+11111
+011111
+ 
+ 5
+ 0
+ 10
+ 000
+ 0010
+ */
